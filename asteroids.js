@@ -6,6 +6,11 @@ var AsteroidsObject = function(){
     this.draw = function(){
 	ctx.strokeRect(this.xcor,this.ycor,10,20);
     };
+    this.update = function(){
+	this.xcor+=this.xvel;
+	this.ycor+=this.yvel;
+	this.draw();
+    };
 };
 
 var Player = function(){
@@ -22,7 +27,7 @@ var Player = function(){
 	ctx.stroke();
 	ctx.closePath();
     };
-    this.update = function(){
+    this.updateUser = function(){
 	if (this.accel > 0){
 	    var newx = this.xvel + this.accel*Math.cos(this.angle);
 	    var newy = this.yvel + this.accel*Math.sin(this.angle);
@@ -52,9 +57,7 @@ var Player = function(){
 	if (rightPress){
 	    this.angle = (this.angle+0.05)%(2*Math.PI);
 	}
-	this.xcor+=this.xvel;
-	this.ycor+=this.yvel;
-	this.draw();
+	this.update();
     }
 };
 Player.prototype = Object.create(AsteroidsObject.prototype);
@@ -100,7 +103,7 @@ var setupKeypress = function setupKeypress(){
 
 var drawCanvas = function drawCanvas(){
     ctx.fillRect(0,0,canvas.width,canvas.height);
-    player.update();
+    player.updateUser();
     window.requestAnimationFrame(drawCanvas);
 };
 
