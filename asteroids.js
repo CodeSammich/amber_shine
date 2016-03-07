@@ -1,6 +1,7 @@
 /*--
   Constructor for an object in asteroids
---*/
+  --*/
+
 var AsteroidsObject = function(){
     this.xcor = this.ycor = this.xvel = this.yvel = 0;
     this.draw = function(){
@@ -72,6 +73,8 @@ var ctx = canvas.getContext("2d");
 var player;
 var leftPress, rightPress;
 
+var requestId; //for animation stacking stop
+
 ctx.fillStyle = "#000";
 ctx.strokeStyle= "#FFF";
 ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -104,17 +107,27 @@ var setupKeypress = function setupKeypress(){
 var drawCanvas = function drawCanvas(){
     ctx.fillRect(0,0,canvas.width,canvas.height);
     player.updateUser();
-    window.requestAnimationFrame(drawCanvas);
+
+    //if( player.willAnimate)
+    requestId = window.requestAnimationFrame(drawCanvas);
+
+    console.log(player.xvel);
+
 };
 
-var setup = function setup(){
-    player = new Player();
-    setupKeypress();
-    drawCanvas();
+var stopAnimation = function() {
+    if (requestId ) {
+	window.cancelAnimationFrame(requestId);
+	requestId = undefined;
+    }
+}
 
-    player.xvel = 0;
-    player.yvel = 0;
-    console.log(player.accel);
+var setup = function setup(){
+    player = new Player(); 
+    setupKeypress();
+    if(!requestId)
+	drawCanvas();
+
     console.log("setup");
 };
 
