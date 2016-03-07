@@ -1,6 +1,11 @@
 /*--
   Constructor for an object in asteroids
 --*/
+
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+
+
 var AsteroidsObject = function(){
     this.xcor = this.ycor = this.xvel = this.yvel = 0;
     this.draw = function(){
@@ -10,21 +15,39 @@ var AsteroidsObject = function(){
 
 var Player = function(){
     AsteroidsObject.call(this); //calls the AsteroidsObject function first to initialize the variables
-    this.angle = this.vel = this.accel = 0;
+    this.angle =  this.accel = 0;
+    this.draw = function(){
+	ctx.beginPath();
+	ctx.moveTo(this.xcor+10*Math.cos(this.angle),this.ycor+10*Math.sin(this.angle));
+	ctx.lineTo(this.xcor+10*Math.cos(this.angle+Math.PI*3/4),this.ycor+10*Math.sin(this.angle+Math.PI*3/4));
+	ctx.lineTo(this.xcor+10*Math.cos(this.angle+Math.PI*5/4),this.ycor+10*Math.sin(this.angle+Math.PI*5/4));
+	ctx.lineTo(this.xcor+10*Math.cos(this.angle),this.ycor+10*Math.sin(this.angle));
+	ctx.stroke();
+	ctx.closePath();
+    };
     this.update = function(){
 	if (this.accel > 0){
-	    var newvel = this.vel + this.accel;
-	    if (newvel > -4 && newvel < 4){ //stay below maximum velocity
-		this.vel = newvel;
+	    var newx = this.xvel + this.accel*Math.cos(this.angle);
+	    var newy = this.yvel + this.accel*Math.sin(this.angle);
+	    var newvel = Math.pow(Math.pow(newx,2) + Math.pow(newy,2),0.5);
+	    if (newvel > -5 && newvel < 5){ //stay below maximum velocity
+		this.xvel = newx;
+		this.yvel = newy;
 	    }
-	    this.xvel = this.vel*Math.cos(this.angle);
-	    this.yvel = this.vel*Math.sin(this.angle);
 	}
 	else{ //natural deceleration
-	    if (this.vel > 0)
-		this.vel-=0.01;
-	    if (this.vel < 0)
-		this.vel+=0.01;
+	    if (this.xvel > 0){
+		this.xvel-=0.01;
+	    }
+	    if (this.xvel < 0){
+		this.xvel+=0.01;
+	    }
+	    if (this.yvel > 0){
+		this.yvel-=0.01;
+	    }
+	    if (this.yvel < 0){
+		this.yvel+=0.01;
+	    }
 	}
 	if (leftPress){
 	    this.angle = (this.angle-0.05)%(2*Math.PI);
@@ -43,9 +66,6 @@ Player.prototype = Object.create(AsteroidsObject.prototype);
 /*--
       DOM Manipulation
 --*/
-
-var canvas = document.getElementById("canvas");
-var ctx = canvas.getContext("2d");
 var player;
 var leftPress, rightPress;
 
