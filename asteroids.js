@@ -112,6 +112,9 @@ var setup = function setup(){
     setupKeypress();
     drawCanvas();
 
+    player.xvel = 0;
+    player.yvel = 0;
+    console.log(player.accel);
     console.log("setup");
 };
 
