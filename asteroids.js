@@ -2,22 +2,54 @@
   Constructor for an object in asteroids
 --*/
 var AsteroidsObject = function(){
-    this.angle = this.xcor = this.ycor = this.vel = this.accel = 0;
+    this.xcor = this.ycor = this.xvel = this.yvel = 0;
     this.draw = function(){
 	ctx.strokeRect(this.xcor,this.ycor,10,20);
-    }
+    };
     this.update = function(){
+	this.xcor+=this.xvel;
+	this.ycor+=this.yvel;
+	this.draw();
+    };
+};
+
+var Player = function(){
+    AsteroidsObject.call(this); //calls the AsteroidsObject function first to initialize the variables
+    this.angle = this.accel = 0;
+    this.xcor = canvas.width/2;
+    this.ycor = canvas.height/2;
+    this.draw = function(){
+	ctx.beginPath();
+	ctx.moveTo(this.xcor+10*Math.cos(this.angle),this.ycor+10*Math.sin(this.angle));
+	ctx.lineTo(this.xcor+10*Math.cos(this.angle+Math.PI*3/4),this.ycor+10*Math.sin(this.angle+Math.PI*3/4));
+	ctx.lineTo(this.xcor+10*Math.cos(this.angle+Math.PI*5/4),this.ycor+10*Math.sin(this.angle+Math.PI*5/4));
+	ctx.lineTo(this.xcor+10*Math.cos(this.angle),this.ycor+10*Math.sin(this.angle));
+	ctx.stroke();
+	ctx.closePath();
+    };
+    this.updateUser = function(){
 	if (this.accel > 0){
-	    var newvel = this.vel + this.accel;
+	    var newx = this.xvel + this.accel*Math.cos(this.angle);
+	    var newy = this.yvel + this.accel*Math.sin(this.angle);
+	    var newvel = Math.pow(Math.pow(newx,2) + Math.pow(newy,2),0.5);
 	    if (newvel > -4 && newvel < 4){ //stay below maximum velocity
-		this.vel = newvel;
+		this.xvel = newx;
+		this.yvel = newy;
 	    }
 	}
 	else{ //natural deceleration
-	    if (this.vel > 0)
-		this.vel-=0.01;
-	    if (this.vel < 0)
-		this.vel+=0.01;
+	    if (this.xvel > 0){
+		this.xvel-=0.01;
+	    }
+	    if (this.xvel < 0){
+		this.xvel+=0.01;
+	    }
+	    if (this.yvel > 0){
+		this.yvel-=0.01;
+	    }
+	    if (this.yvel < 0){
+		this.yvel+=0.01;
+	    }
 	}
 	if (leftPress){
 	    this.angle = (this.angle-0.05)%(2*Math.PI);
@@ -25,18 +57,18 @@ var AsteroidsObject = function(){
 	if (rightPress){
 	    this.angle = (this.angle+0.05)%(2*Math.PI);
 	}
-	this.xcor+=this.vel*Math.cos(this.angle);
-	this.ycor+=this.vel*Math.sin(this.angle);
-	this.draw();
+	this.update();
     }
 };
+Player.prototype = Object.create(AsteroidsObject.prototype);
+
 
 /*--
-  DOM Manipulation
+      DOM Manipulation
 --*/
-
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
+
 var player;
 var leftPress, rightPress;
 
@@ -47,7 +79,7 @@ ctx.fillRect(0,0,canvas.width,canvas.height);
 var setupKeypress = function setupKeypress(){
     document.addEventListener("keydown",function(e){
 	if (e.keyCode == 38){ //up
-	    player.accel=0.1;
+	    player.accel=0.05;
 	}
 	else if (e.keyCode == 37){//left
 	    leftPress = true;
@@ -71,14 +103,12 @@ var setupKeypress = function setupKeypress(){
 
 var drawCanvas = function drawCanvas(){
     ctx.fillRect(0,0,canvas.width,canvas.height);
-    player.update();
+    player.updateUser();
     window.requestAnimationFrame(drawCanvas);
 };
 
 var setup = function setup(){
-    player = new AsteroidsObject();
-    player.xcor = canvas.width/2;
-    player.ycor = canvas.height/2;
+    player = new Player();
     setupKeypress();
     drawCanvas();
 };
