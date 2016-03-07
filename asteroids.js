@@ -2,16 +2,23 @@
   Constructor for an object in asteroids
 --*/
 var AsteroidsObject = function(){
-    this.angle = this.xcor = this.ycor = this.vel = this.accel = 0;
+    this.xcor = this.ycor = this.xvel = this.yvel = 0;
     this.draw = function(){
 	ctx.strokeRect(this.xcor,this.ycor,10,20);
-    }
+    };
+};
+
+var Player = function(){
+    AsteroidsObject.call(this); //calls the AsteroidsObject function first to initialize the variables
+    this.angle = this.vel = this.accel = 0;
     this.update = function(){
 	if (this.accel > 0){
 	    var newvel = this.vel + this.accel;
 	    if (newvel > -4 && newvel < 4){ //stay below maximum velocity
 		this.vel = newvel;
 	    }
+	    this.xvel = this.vel*Math.cos(this.angle);
+	    this.yvel = this.vel*Math.sin(this.angle);
 	}
 	else{ //natural deceleration
 	    if (this.vel > 0)
@@ -25,14 +32,16 @@ var AsteroidsObject = function(){
 	if (rightPress){
 	    this.angle = (this.angle+0.05)%(2*Math.PI);
 	}
-	this.xcor+=this.vel*Math.cos(this.angle);
-	this.ycor+=this.vel*Math.sin(this.angle);
+	this.xcor+=this.xvel;
+	this.ycor+=this.yvel;
 	this.draw();
     }
 };
+Player.prototype = Object.create(AsteroidsObject.prototype);
+
 
 /*--
-  DOM Manipulation
+      DOM Manipulation
 --*/
 
 var canvas = document.getElementById("canvas");
@@ -70,15 +79,14 @@ var setupKeypress = function setupKeypress(){
 };
 
 var drawCanvas = function drawCanvas(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.fillRect(0,0,canvas.width,canvas.height);
     player.update();
     window.requestAnimationFrame(drawCanvas);
 };
 
 var setup = function setup(){
-    player = new AsteroidsObject();
-    player.xcor = canvas.width/2;
-    player.ycor = canvas.height/2;
+    player = new Player();
     setupKeypress();
     drawCanvas();
 };
