@@ -1,11 +1,6 @@
 /*--
   Constructor for an object in asteroids
 --*/
-
-var canvas = document.getElementById("canvas");
-var ctx = canvas.getContext("2d");
-
-
 var AsteroidsObject = function(){
     this.xcor = this.ycor = this.xvel = this.yvel = 0;
     this.draw = function(){
@@ -15,7 +10,9 @@ var AsteroidsObject = function(){
 
 var Player = function(){
     AsteroidsObject.call(this); //calls the AsteroidsObject function first to initialize the variables
-    this.angle =  this.accel = 0;
+    this.angle = this.accel = 0;
+    this.xcor = canvas.width/2;
+    this.ycor = canvas.height/2;
     this.draw = function(){
 	ctx.beginPath();
 	ctx.moveTo(this.xcor+10*Math.cos(this.angle),this.ycor+10*Math.sin(this.angle));
@@ -30,7 +27,7 @@ var Player = function(){
 	    var newx = this.xvel + this.accel*Math.cos(this.angle);
 	    var newy = this.yvel + this.accel*Math.sin(this.angle);
 	    var newvel = Math.pow(Math.pow(newx,2) + Math.pow(newy,2),0.5);
-	    if (newvel > -5 && newvel < 5){ //stay below maximum velocity
+	    if (newvel > -4 && newvel < 4){ //stay below maximum velocity
 		this.xvel = newx;
 		this.yvel = newy;
 	    }
@@ -66,6 +63,9 @@ Player.prototype = Object.create(AsteroidsObject.prototype);
 /*--
       DOM Manipulation
 --*/
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+
 var player;
 var leftPress, rightPress;
 
@@ -76,7 +76,7 @@ ctx.fillRect(0,0,canvas.width,canvas.height);
 var setupKeypress = function setupKeypress(){
     document.addEventListener("keydown",function(e){
 	if (e.keyCode == 38){ //up
-	    player.accel=0.1;
+	    player.accel=0.05;
 	}
 	else if (e.keyCode == 37){//left
 	    leftPress = true;
@@ -99,7 +99,6 @@ var setupKeypress = function setupKeypress(){
 };
 
 var drawCanvas = function drawCanvas(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.fillRect(0,0,canvas.width,canvas.height);
     player.update();
     window.requestAnimationFrame(drawCanvas);
