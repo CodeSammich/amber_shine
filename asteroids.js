@@ -111,6 +111,12 @@ var setup = function setup(){
     player = new Player();
     setupKeypress();
     drawCanvas();
+
+    console.log("setup");
 };
 
 window.addEventListener("load",setup);
+
+//Buttons
+var restart = document.getElementById( "restart" );
+restart.addEventListener( "click", setup);
