@@ -3,7 +3,10 @@
   --*/
 
 var AsteroidsObject = function(){
-    this.xcor = this.ycor = this.xvel = this.yvel = 0;
+    this.xcor = this.ycor = 0;
+    this.xvel = this.yvel = 0;
+    this.radius = 0;
+    this.health = 0;
     this.draw = function(){
 	ctx.strokeRect(this.xcor,this.ycor,10,20);
     };
@@ -19,6 +22,7 @@ var Player = function(){
     this.angle = this.accel = 0;
     this.xcor = canvas.width/2;
     this.ycor = canvas.height/2;
+    this.health = 3;
     this.draw = function(){
 	ctx.beginPath();
 	ctx.moveTo(this.xcor+10*Math.cos(this.angle),this.ycor+10*Math.sin(this.angle));
