@@ -23,6 +23,7 @@ var Player = function(){
     this.xcor = canvas.width/2;
     this.ycor = canvas.height/2;
     this.health = 3;
+    this.radius = 10; //change this later
     this.draw = function(){
 	ctx.beginPath();
 	ctx.moveTo(this.xcor+10*Math.cos(this.angle),this.ycor+10*Math.sin(this.angle));
@@ -33,6 +34,11 @@ var Player = function(){
 	ctx.closePath();
     };
     this.updateUser = function(){
+	if (this.xcor + this.radius >= canvas.width || this.xcor - this.radius <= 0 || this.ycor + this.radius >= canvas.height
+	   || this.ycor <= 0){
+	    this.xvel = -1 * this.xvel;
+	    this.yvel = -1 * this.yvel;
+	}
 	if (this.accel > 0){
 	    var newx = this.xvel + this.accel*Math.cos(this.angle);
 	    var newy = this.yvel + this.accel*Math.sin(this.angle);
