@@ -34,8 +34,10 @@ var Player = function(){
 	ctx.closePath();
     };
     this.updateUser = function(){
-	if (this.xcor + this.radius >= canvas.width || this.xcor - this.radius <= 0 || this.ycor + this.radius >= canvas.height
-	   || this.ycor <= 0){
+	if (this.xcor + this.radius >= canvas.width || this.xcor - this.radius <= 0){
+	    this.xvel = -1 * this.xvel;
+	}
+	if(this.ycor + this.radius >= canvas.height || this.ycor <= 0){
 	    this.xvel = -1 * this.xvel;
 	    this.yvel = -1 * this.yvel;
 	}
